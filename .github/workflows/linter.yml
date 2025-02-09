@@ -1,7 +1,6 @@
 name: cpp-linter
 
 on:
-  - push
   - pull_request
   - workflow_dispatch
 
@@ -10,9 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/checkout@v4
+      - name: Check out this repostiory
+        uses: actions/checkout@v4
 
-      - name: Check out the style guide
+      - name: Check out the clang-format file from the style guide
         uses: actions/checkout@v4
         with:
           repository: aica-technology/.github
