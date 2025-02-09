@@ -1,0 +1,49 @@
+name: cpp-linter
+
+on:
+  - pull_request
+  - workflow_dispatch
+
+permissions:
+  pull-requests: write
+
+jobs:
+  cpp-linter:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out this repository
+        uses: actions/checkout@v4
+
+      - name: Check out the clang-format file from the style guide
+        uses: actions/checkout@v4
+        with:
+          repository: aica-technology/.github
+          sparse-checkout: |
+            guidelines/.clang-format
+          sparse-checkout-cone-mode: false
+          path: '.style_guide'
+
+      - name: Move the clang format file to the root of the repo
+        run: |
+          mv ./.style_guide/guidelines/.clang-format .
+
+      - name: Run C++ linter action
+        uses: cpp-linter/cpp-linter-action@main
+        id: linter
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: file
+          files-changed-only: false
+          thread-comments: true
+          step-summary: true
+          verbosity: 'debug'
+
+      - name: Fail fast?!
+        if: steps.linter.outputs.checks-failed != 0
+        run: |
+          echo "some linter checks failed. ${{ steps.linter.outputs.checks-failed }}"
+        # for actual deployment
+        # run: exit 1
