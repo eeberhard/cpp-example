@@ -12,13 +12,13 @@ jobs:
       - name: Check out this repostiory
         uses: actions/checkout@v4
 
-      - name: Check out the clang-format file from the style guide
-        uses: actions/checkout@v4
-        with:
-          repository: aica-technology/.github
-          sparse-checkout: |
-            guidelines/.clang-format
-          sparse-checkout-cone-mode: false
+#      - name: Check out the clang-format file from the style guide
+#        uses: actions/checkout@v4
+#        with:
+#          repository: aica-technology/.github
+#          sparse-checkout: |
+#            guidelines/.clang-format
+#          sparse-checkout-cone-mode: false
 
       - uses: cpp-linter/cpp-linter-action@main
         id: linter
@@ -28,8 +28,9 @@ jobs:
         with:
           style: file
           files-changed-only: false
-          thread-comments: false
+          thread-comments: true
           step-summary: true
+          verbosity: 'debug'
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed != 0
